@@ -1,0 +1,6 @@
+# ignore idea/ directory
+.idea/
+# ignore __pycache__/ directory
+__pycache__/
+# ignore flaskr.db
+flaskr.db
