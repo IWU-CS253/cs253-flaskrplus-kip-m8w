@@ -12,8 +12,7 @@
 
 import os
 from sqlite3 import dbapi2 as sqlite3
-from flask import Flask, request, g, redirect, url_for, render_template, flash
-
+from flask import Flask, request, g, redirect, url_for, render_template, flash, render_template_string
 
 # create our little application :)
 app = Flask(__name__)
@@ -90,11 +89,16 @@ def show_filter():
     # variable to get the category we want, not needed but neater
     f_category = request.form.get('categories')
     db = get_db()
-    # send all entries in the table for the filter to load all categories
+    # get all categories for filter
     category = db.execute('SELECT DISTINCT category FROM entries')
     categories = category.fetchall()
-    # filter the posts to have the categories wanted be the only posts shown
-    filtered = db.execute(f"SELECT DISTINCT * FROM entries WHERE category='{f_category}' ORDER BY id DESC")
-    entries = filtered.fetchall()
-    return render_template('show_entries.html', entries=entries, categories=categories)
+    if f_category != 'Home':
+        # filter the posts to have the categories wanted be the only posts shown
+        filtered = db.execute(f"SELECT DISTINCT * FROM entries WHERE category='{f_category}' ORDER BY id DESC")
+        entries = filtered.fetchall()
+        return render_template('show_entries.html', entries=entries, categories=categories)
+    else:
+        cur = db.execute('select title, category, text from entries order by id desc')
+        entries = cur.fetchall()
+        return render_template('show_entries.html', entries=entries, categories=categories)
 
