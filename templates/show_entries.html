@@ -14,6 +14,7 @@
   <form action="{{ url_for('show_filter') }}" method="post" class="category-filter">
     <select name="categories" id="categories">
     <option value="none" selected disabled hidden>Category</option>
+    <option value="Home">No Filters</option>
       {% for category in categories %}
         <option value="{{ category.category }}">{{ category.category }}</option>
       {% endfor %}
