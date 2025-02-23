@@ -68,8 +68,11 @@ def close_db(error):
 def show_entries():
     db = get_db()
     cur = db.execute('select title, category, text from entries order by id desc')
+    category_col = db.execute('SELECT DISTINCT category FROM entries')
+    categories = category_col.fetchall()
     entries = cur.fetchall()
-    return render_template('show_entries.html', entries=entries)
+    # created a seperate variable for the HTML so that the category filter can filter all without change
+    return render_template('show_entries.html', entries=entries, categories=categories)
 
 
 @app.route('/add', methods=['POST'])
@@ -80,3 +83,18 @@ def add_entry():
     db.commit()
     flash('New entry was successfully posted')
     return redirect(url_for('show_entries'))
+
+# filter the posts to what we specify
+@app.route('/filter', methods=['POST'])
+def show_filter():
+    # variable to get the category we want, not needed but neater
+    f_category = request.form.get('categories')
+    db = get_db()
+    # send all entries in the table for the filter to load all categories
+    category = db.execute('SELECT DISTINCT category FROM entries')
+    categories = category.fetchall()
+    # filter the posts to have the categories wanted be the only posts shown
+    filtered = db.execute(f"SELECT DISTINCT * FROM entries WHERE category='{f_category}' ORDER BY id DESC")
+    entries = filtered.fetchall()
+    return render_template('show_entries.html', entries=entries, categories=categories)
+
