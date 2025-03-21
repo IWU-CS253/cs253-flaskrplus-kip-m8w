@@ -83,8 +83,6 @@ def add_entry():
     flash('New entry was successfully posted')
     return redirect(url_for('show_entries'))
 
-# deletes an entry, supposed to work however id is not being passed through, however i am not sure why
-# getting entry.id just doesnt seem to work
 @app.route('/delete', methods=['POST'])
 def delete_entry():
     db = get_db()
@@ -96,12 +94,11 @@ def delete_entry():
 
 @app.route('/edit-redir', methods=['POST'])
 def edit_template():
-    ent_id = request.args.get("id")
     db = get_db()
-    entry = db.execute('SELECT * FROM entries WHERE id=?',
-                       [ent_id])
-    spec_entry = entry.fetchall()
-    return render_template('edit.html', spec_entry=spec_entry, ent_id=ent_id)
+    cur = db.execute('SELECT * FROM entries WHERE id=?',
+                       [request.args.get("id")])
+    entry = cur.fetchall()
+    return render_template('edit.html', entry=entry)
 
 @app.route('/edit-post', methods=['POST'])
 def edit_post():
