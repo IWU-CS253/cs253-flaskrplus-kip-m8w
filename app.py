@@ -66,7 +66,7 @@ def close_db(error):
 @app.route('/')
 def show_entries():
     db = get_db()
-    cur = db.execute('select title, category, text from entries order by id desc')
+    cur = db.execute('select title, category, text, id from entries order by id desc')
     category_col = db.execute('SELECT DISTINCT category FROM entries')
     categories = category_col.fetchall()
     entries = cur.fetchall()
